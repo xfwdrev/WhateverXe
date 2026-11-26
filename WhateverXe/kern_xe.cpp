@@ -14653,6 +14653,20 @@ void XE::processNativePanel(KernelPatcher &patcher,size_t index,mach_vm_address_
     // ADLS_PANEL_PWM_INSTALL_END
    }
 
+   // AI 修改: opt-in internal eDP training fix. The implementation and its
+   // state live in kern_tgl_edp_training.{hpp,cpp} to keep this file small.
+   if(tglActive && !display13FramebufferRequested &&
+    XELP::displayAdapter(xeProfile.family)==XELP::DisplayAdapter::TGL &&
+    XELP::PanelPower::nativePPS0(firmwarePorts,xeProfile.family)) {
+    TGLEDPTraining::Host host;
+    host.active=&tglActive;
+    host.observationController=&tglObservationController;
+    host.orgRegisterRead=&orgTGLRegisterRead;
+    host.ports=&firmwarePorts;
+    host.adlsLightUp=orgADLSLightUpEDP;
+    TGLEDPTraining::install(tglEDPTraining,patcher,index,address,size,host);
+   }
+
 			if (tglActive) {
 				// TGL/Xe-LP has no dedicated eDP transcoder. Keep the allocated
 				// pipe (or getTranscoderOffset's pipe argument), including when

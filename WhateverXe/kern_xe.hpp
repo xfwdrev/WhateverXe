@@ -33,6 +33,7 @@
 #include "kern_xelp_donor.hpp"
 #include "kern_xelp_display_contract.hpp"
 #include "kern_xelp_link_requirements.hpp"
+#include "kern_tgl_edp_training.hpp"
 
 #include "kern_dvmt.hpp"
 #include <Headers/kern_patcher.hpp>
@@ -576,6 +577,9 @@ private:
 	static bool prepareDisplay12RGBMode(void *controller,void *path,uint32_t *mode,bool retained);
 	static uint32_t tglPanelDepthPort(void *port);
 	static void wrapTGLModeTiming(void *controller,void *fb,void *timing);
+	// AI 修改: internal eDP training fix (-wex-edp-fix-training). The state and
+	// hooks live in kern_tgl_edp_training.{hpp,cpp}.
+	TGLEDPTraining::State tglEDPTraining;
 	mach_vm_address_t orgTGLGamma10 {}, orgTGLRegisterWrite {}, orgTGLFastRegisterWrite {};
 	static void wrapTGLGamma10(void *path, void *transaction, uint32_t control);
 	static void wrapTGLRegisterWrite(void *access, unsigned long reg, uint32_t value);
